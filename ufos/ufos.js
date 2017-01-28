@@ -37,7 +37,6 @@ d3.json(mapPath, worldjson=>{
 	.attr("y",.6*height)
 	.text("||");
 
-    
     d3.json('./ufos.json', ufos=>{
 
 	var ufos = ufos.filter(function(d){return d.lon < -20}); // set location to USA
@@ -47,7 +46,7 @@ d3.json(mapPath, worldjson=>{
 	var timeLapse = 800;
 	var t = d3.transition().duration(.5*timeLapse);
 
-	console.log(data[2000][0]);
+	//console.log(data[2000][0]);
 
 	colorMap = {
 	    oval: "#0000ff",
