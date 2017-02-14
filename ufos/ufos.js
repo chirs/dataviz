@@ -1,12 +1,9 @@
 
 var mapPath = './world-110m2.json'
-
-// var mapPath = 'https://d3js.org/us-10m.v1.json'; 
     
 d3.json(mapPath, worldjson=>{
     
-    var worlddata = topojson.object(worldjson, worldjson.objects.countries).geometries
-    //var worlddata = topojson.object(worldjson, worldjson.objects.states).geometries    
+    var countryData = topojson.object(worldjson, worldjson.objects.countries).geometries
     
     var height = 800;
     var width = 1.5 * height;
@@ -20,7 +17,7 @@ d3.json(mapPath, worldjson=>{
     var path = d3.geoPath(projection);
     
     svg.selectAll("path")
-	.data(worlddata)
+	.data(countryData)
 	.enter()
 	.append("path")
 	.attr("d",path);
@@ -35,7 +32,14 @@ d3.json(mapPath, worldjson=>{
 	.attr("class","pause")
 	.attr("x",50)
 	.attr("y",.6*height)
-	.text("||");
+	.text("||")
+
+    svg.append("text")
+	.attr("class","play")
+	.attr("x",100)
+	.attr("y",.6*height)
+	.text(">")    
+
 
     d3.json('./ufos.json', ufos=>{
 
@@ -45,8 +49,6 @@ d3.json(mapPath, worldjson=>{
 	var years = _.keys(data);
 	var timeLapse = 800;
 	var t = d3.transition().duration(.5*timeLapse);
-
-	//console.log(data[2000][0]);
 
 	colorMap = {
 	    oval: "#0000ff",
@@ -82,8 +84,12 @@ d3.json(mapPath, worldjson=>{
 		//.on("mouseover", function(d){
 		//    console.log("mouse");
 		//});
+
 	};
 
+	var currentYear = undefined;
+
+	// Modify this to run better with timer.
 	var intervalFunc = function(elapsed){
 	    var whichKey = Math.floor(elapsed/timeLapse % years.length);
 	    var year = years[whichKey];
@@ -91,10 +97,23 @@ d3.json(mapPath, worldjson=>{
 	    displayYear(year);
 	}
 
-	//displayYear(2000);
-	d3.interval(intervalFunc, timeLapse)
+	//var t = d3.timer(intervalFunc, timeLapse, timeLapse)
+	//var t = d3.timer(intervalFunc);
 
-	
+	var t = d3.interval(intervalFunc, timeLapse)
+	console.log(t)
+
+	d3.select(".pause").on('click', function(){
+	    //d3.select(this).text('p').classed('pause', false).classed('play', true)
+	    t.stop();
+	    console.log(t);
+	});
+
+	d3.select(".play").on('click', function(){
+	    //console.log('hello');
+	    //d3.select(this).text('||').classed('play', false).classed('pause', true)
+	    t.restart(intervalFunc);
+	});
     })
     
-})
+});
