@@ -28,18 +28,6 @@ d3.json(mapPath, worldjson=>{
 	.attr("y",.5*height)
 	.text("1900");
 
-    svg.append("text")
-	.attr("class","pause")
-	.attr("x",50)
-	.attr("y",.6*height)
-	.text("||")
-
-    svg.append("text")
-	.attr("class","play")
-	.attr("x",100)
-	.attr("y",.6*height)
-	.text(">")    
-
 
     d3.json('./ufos.json', ufos=>{
 
@@ -49,6 +37,19 @@ d3.json(mapPath, worldjson=>{
 	var years = _.keys(data);
 	var timeLapse = 800;
 	var t = d3.transition().duration(.5*timeLapse);
+
+	colorMap = {
+	    oval: "#0000ff",
+	};
+
+	var getColor = function(shape){
+	    color = colorMap[shape];
+	    if (color == undefined){
+		return "#000000"}
+	    else {
+		return color;
+	    }
+	}
 
 	var removePoints = function(){
 	    svg.selectAll("circle")
@@ -66,11 +67,8 @@ d3.json(mapPath, worldjson=>{
 		.append("circle")
 		.attr("cx",d=>projection([d.lon,d.lat])[0])
 		.attr("cy",d=>projection([d.lon,d.lat])[1])
-	        .style("color", "red")
-		.classed("red", true)
 		.transition(t)
 		.attr("r",3)
-		.style('fill', '#10d030')
 		//.on("mouseover", function(d){
 		//    console.log("mouse");
 		//});
@@ -87,23 +85,8 @@ d3.json(mapPath, worldjson=>{
 	    displayYear(year);
 	}
 
-	//var t = d3.timer(intervalFunc, timeLapse, timeLapse)
-	//var t = d3.timer(intervalFunc);
-
 	var t = d3.interval(intervalFunc, timeLapse)
-	console.log(t)
 
-	d3.select(".pause").on('click', function(){
-	    //d3.select(this).text('p').classed('pause', false).classed('play', true)
-	    t.stop();
-	    console.log(t);
-	});
-
-	d3.select(".play").on('click', function(){
-	    //console.log('hello');
-	    //d3.select(this).text('||').classed('play', false).classed('pause', true)
-	    t.restart(intervalFunc);
-	});
     })
     
 });
